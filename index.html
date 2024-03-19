@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sir Chardy's Math Challenge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <style>
+    /* Global settings */
+    *, *::before, *::after {
+        box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    }
+
+    body, html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        display: flex; /* Use flex to center .container */
+        justify-content: center; /* Center .container horizontally */
+        align-items: center; /* Center .container vertically */
+        background-image: url('bg.svg'); /* Your pixelated background */
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        font-family: 'Press Start 2P', cursive; /* Old-school video game text font */
+    }
+
+    .container {
+    position: relative; /* New line added */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 90%;
+    max-width: 1200px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+
+    .game-box {
+        width: calc(40% - 20px); /* Half width minus margins for two boxes side by side */
+        max-height: 80vh;
+        overflow-y: auto;
+        padding: 20px;
+        margin: 10px; /* Spacing around boxes */
+        border: 4px solid #FFFFFF;
+        background-color: rgba(0, 0, 0, 0.75);
+        color: #FFFFFF;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 0 15px #FFFFFF;
+        image-rendering: pixelated;
+    }
+    .info-animation-box {
+    width: calc(50% - 20px); /* Adjust as needed */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center-align the content */
+    margin: 10px;
+    border: 4px solid #FFFFFF;
+    padding:20px;
+        background-color: rgba(0, 0, 0, 0.75);
+        color: #FFFFFF;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 0 15px #FFFFFF;
+        image-rendering: pixelated;
+}
+
+.progress-score-timer {
+    text-align: center;
+    margin-bottom: 20px; /* Add some space between the score/timer and the animation */
+    margin-top: 15px;
+}
+
+    .animation-box {
+        width: 100%; /* Half width minus margins for two boxes side by side */
+        max-height: 80vh;
+        overflow-y: auto;
+        padding: 20px;
+        margin: 10px; /* Spacing around boxes */
+        border: 4px solid #FFFFFF;
+        background-color: rgba(0, 0, 0, 0.75);
+        color: #FFFFFF;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 0 15px #FFFFFF;
+        image-rendering: pixelated;
+    }
+
+    /* Styling for text, inputs, buttons, etc., to match the retro theme */
+    h3, h5, p, input, button, #feedback, #progressbar, #score, #timeLeft {
+        font-size: 16px;
+        font-family: 'Press Start 2P', cursive;
+        color: #FFFFFF;
+        text-shadow: 0 0 5px #000000;
+    }
+
+    input, button {
+        background: #000000;
+        border: 2px solid #FFFFFF;
+        padding: 5px 10px;
+        color: #FFFFFF;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #FFFFFF;
+        color: #000000;
+    }
+
+    input {
+        margin: 10px 0;
+    }
+
+    #playAgainModal {
+    position: fixed; /* Cover the entire viewport */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20; /* Ensure it's above all other content */
+}
+
+.play-again-container {
+    padding: 40px; /* Increase padding for more space inside */
+    border: 2px solid #FFFFFF;
+    background-color: #000000; /* Solid background for the container */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Add some shadow for depth */
+    text-align: center;
+    width: 50%; /* Making the box wider */
+    max-width: 600px; /* Ensuring it doesn't get too wide on larger screens */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#playAgainButton {
+    font-size: 1rem;
+    padding: 10px 20px;
+    margin-top: 20px; /* Add some space above the button */
+    cursor: pointer;
+    background: #FFFFFF;
+    color: #000000;
+    border: none;
+    border-radius: 5px;
+}
+
+.play-again-container h2, .play-again-container p {
+    color: #FFFFFF; /* Ensuring text is visible against the background */
+    margin: 10px 0; /* Add some margin to separate elements */
+}
+
+
+#playAgainButton:hover {
+    background-color: #f2f2f2;
+}
+
+
+
+    #progressbar {
+        width: 100%; /* Fill the container */
+        display: flex;
+        justify-content: center;
+        margin: auto;
+    }
+
+    @media (max-width: 1200px) {
+    h3, h5, p, input, button, #feedback, #progressbar, #score, #timeLeft {
+        font-size: calc(1vw + 1vh + 0.5vmin); /* Scales based on viewport size */
+    }
+}
+
+
+    @media (max-width: 768px) {
+    .game-box, .info-animation-box {
+        width: 95%; /* Slightly less than full width for a bit of margin */
+        margin: 5px 0; /* Reduced top and bottom margin */
+        padding: 5px; /* Reduced padding */
+    }
+
+    h3, h5, p, input, button, #feedback, #progressbar, #score, #timeLeft {
+        font-size: 4vw; /* Reduced font size but not too small */
+    }
+
+    input, button {
+        width: auto; /* Ensures input and button are not wider than their container */
+        max-width: 100%; /* Full width of the container */
+        padding: 10px; /* Sufficient padding for touch targets */
+    }
+
+    .progress-score-timer, .animation-box {
+        width: auto; /* Ensure these elements do not exceed their container's width */
+        max-width: 100%; /* Ensures elements fit within the screen */
+        padding: 0; /* Adjust padding as needed */
+    }
+
+    .animation-box img {
+        max-width: 100%; /* Ensures images are not wider than their container */
+        height: auto; /* Keeps the image aspect ratio intact */
+    }
+
+    .play-again-container {
+        font-size: 5vw; /* Adjust font size for modals */
+        padding: 20px; /* Adjust padding */
+        width: 80%; /* Modal width */
+        max-width: none; /* Allow it to scale with the viewport */
+    }
+}
+@media (max-width: 480px) {
+    h3, h5, p, input, button, #feedback, #progressbar, #score, #timeLeft {
+        font-size: 18px; /* Caps the font size so it doesn't grow beyond this point */
+    }
+}
+
+</style>
+
+    
+</head>
+<body>
+    <body>
+        <div class="container">
+            <div class="game-box">
+                <h3>Sir Chardy's Math Challenge</h3>
+                <h5>Are you ready to charge the megaphone?</h5>
+                <p id="question"></p>
+                <input type="text" id="answer" placeholder="Enter your answer here">
+                <button onclick="submitAnswer()">Submit</button>
+                <div id="feedback"></div>
+                <div id="progressbar" style="margin-top: 20px;">
+                    <img src="ruh.svg" alt="Animation" id="progressBar">
+                </div>
+            </div>
+            <div class="info-animation-box"> <!-- New outer box to contain progress bar, score, timer, and animation -->
+                <div class="progress-score-timer">
+                    
+                    <p><span id="score"></span></p>
+                    <p><span id="timeLeft">120</span></p>
+                </div>
+                <div class="animation-box">
+                    <img src="bloop3.svg" alt="Animation" id="animationImage">
+                </div>
+            </div>
+            <div id="playAgainModal" style="display: none;">
+                <div class="play-again-container">
+                    <h2>You lost</h2>
+                    <p>Would you like to play again?</p>
+                    <button onclick="playAgain()" id="playAgainButton">Play Again</button>
+                </div>
+            </div>
+            
+        </div>
+        </body>
+        
+
+<script>
+    const progressImages = [
+    "ruh.svg",  // Image for 0%
+    "ruh2.svg", // Image for 33%
+    "ruh3.svg", // Image for 66%
+    "ruh4.svg" // Image for 100%
+];
+
+const animationImages = [
+    "bloop3.svg",
+    "bloop2.svg",
+    "bloop.svg",
+    "bloop4.svg",
+    "bloop5.svg"
+];
+
+let currentScore = 0;
+let currentAnswer = 0;
+let timeLeft = 120;
+let timeSinceLastAction = 0; // Resets on scoring or starting a new game
+let currentAnimationFrameIndex = 0; // Index for the current animation frame
+let timer;
+
+function generateNewQuestion() {
+    const d = Math.floor(Math.random() * 2) + 1;
+const a = Math.floor(Math.random() * 5) + 1; // This could represent the radian value to be converted.
+const b = Math.PI; // Using the PI constant from the Math object for more accuracy.
+const e = Math.floor(Math.random() * 360) + 1; // This could represent the radian value to be converted.
+
+// Updated condition to reflect conversion operation
+if (d == 1){ 
+    const c = a * (180 / Math.PI); // Convert radians to degrees
+    currentAnswer = c.toFixed(2); // Rounding to two decimal places for simplicity
+    document.getElementById("question").innerText = `Convert ${a} radians to degrees.`;
+}else{
+    const c = e * (Math.PI / 180); // An alternative operation, could be converting degrees back to radians for variety
+    currentAnswer = c.toFixed(2); // Rounding to two decimal places
+    document.getElementById("question").innerText = `Convert ${e} degrees to radians. `;
+}
+    // Reset the inactivity timer and animation upon generating a new question
+    timeSinceLastAction = 0;
+    currentAnimationFrameIndex = 0; // Reset animation to the first frame
+    document.getElementById("animationImage").src = animationImages[currentAnimationFrameIndex];
+}
+
+function submitAnswer() {
+    const userAnswer = parseFloat(document.getElementById("answer").value);
+    const tolerance = 0.01; // Define a tolerance for floating point comparison
+    // Convert currentAnswer back to a number for comparison
+    const currentAnswerNumber = parseFloat(currentAnswer);
+
+    // Check if the user's answer is within an acceptable range of the correct answer
+    if (Math.abs(userAnswer - currentAnswerNumber) <= tolerance) {
+        currentScore++;
+        document.getElementById("score").innerText = `Score: ${currentScore}`;
+        document.getElementById("feedback").innerText = "Correct!";
+        updateProgress();
+        // Reset inactivity timer and animation index upon scoring
+        timeSinceLastAction = 0;
+        currentAnimationFrameIndex = 0;
+        document.getElementById("animationImage").src = animationImages[currentAnimationFrameIndex];
+        generateNewQuestion();
+    } else {
+        document.getElementById("feedback").innerText = "Incorrect, try again.";
+        updateAnimation();
+        checkForLossDueToInactivity();
+    }
+    document.getElementById("answer").value = "";
+}
+
+
+
+function updateProgress() {
+    let previousProgressIndex = currentScore % 4;
+    currentScore++; // Increment score for answering correctly or for another reason calling this function.
+    let newProgressIndex = currentScore % 4;
+    
+    // If the progress bar is resetting (i.e., going from the highest index back to 0),
+    // add an additional 5 points to the score.
+    if (newProgressIndex === 0 && previousProgressIndex > 0) {
+        currentScore += 5; // Add bonus points for completing a cycle
+        document.getElementById("feedback").innerText = "Bonus! +5 points";
+    }
+    
+    // Update the score display after potentially adding bonus points
+    document.getElementById("score").innerText = `Score: ${currentScore}`;
+    
+    // Update the progress bar visually
+    document.getElementById("progressBar").src = progressImages[newProgressIndex];
+}
+
+function updateAnimation() {
+    // Check if it's time to update the animation frame based on inactivity
+    if (timeSinceLastAction % 5 === 0 && timeSinceLastAction > 0) {
+        currentAnimationFrameIndex = (currentAnimationFrameIndex + 1) % animationImages.length;
+        document.getElementById("animationImage").src = animationImages[currentAnimationFrameIndex];
+    }
+    // Special case for 20 seconds of inactivity
+    if (timeSinceLastAction === 20) {
+        document.getElementById("animationImage").src = animationImages[animationImages.length - 1];
+    }
+}
+
+function checkForLossDueToInactivity() {
+    if (timeSinceLastAction >= 20) {
+        clearInterval(timer);
+        alert('Game Over: You did not charge the megaphone in time!');
+        document.getElementById("playAgainModal").style.display = "flex"; // Show the modal
+    }
+}
+
+function updateScoreAndTime() {
+    document.getElementById("timeLeft").innerText = `Time Left: ${timeLeft} seconds`;
+}
+
+function playAgain() {
+    document.getElementById("playAgainModal").style.display = "none"; // Hide the modal
+    currentScore = 0;
+    currentAnswer = 0;
+    timeLeft = 120;
+    timeSinceLastAction = 0;
+    currentAnimationFrameIndex = 0;
+    document.getElementById("score").innerText = `Score: 0`;
+    document.getElementById("timeLeft").innerText = `Time Left: 120 seconds`;
+    document.getElementById("progressBar").src = progressImages[0];
+    document.getElementById("animationImage").src = animationImages[0];
+    clearInterval(timer);
+    startTimer();
+    generateNewQuestion();
+}
+
+function startTimer() {
+    timer = setInterval(function() {
+        timeLeft--;
+        timeSinceLastAction++;
+        updateScoreAndTime();
+        updateAnimation(); // Update the animation based on the inactivity timer
+        checkForLossDueToInactivity();
+
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            alert("Congratulations! You've survived the two minutes.");
+            document.getElementById("playAgainButton").style.display = "block";
+        }
+    }, 1000);
+}
+
+// Initialize the game
+generateNewQuestion();
+startTimer();
+
+    </script>
+    
+</body>
+</html>
